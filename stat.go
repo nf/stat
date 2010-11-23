@@ -31,6 +31,9 @@ func Monitor(period int64) {
 }
 
 func output() {
+	if len(counters) > 0 {
+		log.Println()
+	}
 	for s, c := range counters {
 		c.total += c.period
 		c.cycles++

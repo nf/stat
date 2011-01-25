@@ -1,0 +1,6 @@
+{
+	"name": "Stat",
+	"author": "Andrew Gerrand",
+	"author_email": "nf@wh3rd.net",
+	"description": "Statistics collector library."
+}

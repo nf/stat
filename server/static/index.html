@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+<title>Bench</title>
+<script type="text/javascript" src="flotr/lib/prototype-1.6.0.2.js"></script>
+<!--[if IE]>
+<script type="text/javascript" src="flotr/lib/excanvas.js"></script>
+<script type="text/javascript" src="flotr/lib/base64.js"></script>
+<![endif]-->
+<script type="text/javascript" src="flotr/lib/canvas2image.js"></script>
+<script type="text/javascript" src="flotr/lib/canvastext.js"></script>
+<script type="text/javascript" src="flotr/flotr-0.2.0-alpha.js"></script>
+</head>
+<body>
+
+<div id="container" style="width:900px;height:600px;"></div>
+
+<script type="text/javascript">
+
+function draw(data) {
+	var series = [];
+	Object.keys(data.responseJSON).each(function(key) {
+		series.push({
+			label: key,
+			data: data.responseJSON[key]
+		})
+	});
+	var f = Flotr.draw($('container'), series);
+}
+
+document.observe('dom:loaded', function(){
+	setInterval(function() {
+		new Ajax.Request('/get', { onSuccess: draw })
+	}, 1000)
+});			
+</script>
+		
+</body>
+</html>

@@ -52,7 +52,7 @@ func (s *Server) Update(args *stat.Point, r *struct{}) os.Error {
 	s.series[key] = append(s.series[key], [2]int64{second, args.Value})
 	// trim series to maxLen
 	if sk := s.series[key]; len(sk) > *maxLen {
-		sk = sk[len(sk)-*maxLen:]
+		s.series[key] = sk[len(sk)-*maxLen:]
 	}
 	return nil
 }

@@ -15,12 +15,11 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"github.com/nf/stat"
-	"http"
-	"json"
-	"os"
-	"rpc"
+	"net/http"
+	"net/rpc"
 	"sync"
 	"time"
 )
@@ -32,23 +31,23 @@ var (
 
 type Server struct {
 	series map[string][][2]int64
-	start  int64
+	start  time.Time
 	mu     sync.Mutex
 }
 
 func NewServer() *Server {
 	return &Server{
 		series: make(map[string][][2]int64),
-		start:  time.Nanoseconds(),
+		start:  time.Now(),
 	}
 }
 
-func (s *Server) Update(args *stat.Point, r *struct{}) os.Error {
+func (s *Server) Update(args *stat.Point, r *struct{}) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	// append point to series
 	key := args.Process + " " + args.Series
-	second := (time.Nanoseconds() - s.start) / 100e6
+	second := int64(time.Now().Sub(s.start)) / 100e6
 	s.series[key] = append(s.series[key], [2]int64{second, args.Value})
 	// trim series to maxLen
 	if sk := s.series[key]; len(sk) > *maxLen {
@@ -60,7 +59,7 @@ func (s *Server) Update(args *stat.Point, r *struct{}) os.Error {
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	w.SetHeader("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	e := json.NewEncoder(w)
 	e.Encode(s.series)
 }

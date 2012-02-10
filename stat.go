@@ -16,8 +16,7 @@ package stat
 
 import (
 	"log"
-	"os"
-	"rpc"
+	"net/rpc"
 	"time"
 )
 
@@ -45,7 +44,7 @@ var (
 
 func Monitor(addr string) {
 	if addr != "" {
-		var err os.Error
+		var err error
 		client, err = rpc.DialHTTP("tcp", addr)
 		if err != nil {
 			log.Println(err)
